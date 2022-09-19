@@ -28,6 +28,18 @@ public class ShoppingService {
         builder.append(totalText)
                 .append("; ");
 
+        totalAmount -= this.calcDiscount(shoppingCart, discounts, builder);
+
+        String text = String.format("Kwota do zapłaty: %.2f zł", totalAmount);
+        System.out.println(text);
+        builder.append(text);
+
+        this.logger.log(Level.INFO, builder.toString());
+    }
+
+    private float calcDiscount(ShoppingCart shoppingCart, List<Discount> discounts, StringBuilder builder) {
+        float discountAmount = 0.0f;
+
         for (Discount d : discounts) {
             float amount = d.returnDiscountAmount(shoppingCart);
             if (amount < 1e-03) {
@@ -40,14 +52,9 @@ public class ShoppingService {
             builder.append(text)
                     .append("; ");
 
-            totalAmount -= amount;
+            discountAmount += amount;
         }
 
-        String text = String.format("Kwota do zapłaty: %.2f zł", totalAmount);
-        System.out.println(text);
-        builder.append(text);
-
-        this.logger.log(Level.INFO, builder.toString());
+        return discountAmount;
     }
-
 }
